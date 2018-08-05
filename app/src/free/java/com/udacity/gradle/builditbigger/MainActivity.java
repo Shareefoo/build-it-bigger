@@ -17,12 +17,13 @@ import com.udacity.jokesprovider.JokesProvider;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
+    public static final String KEY_JOKE = "joke";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     public void processFinish(String output) {
         // send the joke from java library to android library
         Intent jokeIntent = new Intent(this, DisplayJokesActivity.class);
-        jokeIntent.putExtra("joke", output);
+        jokeIntent.putExtra(KEY_JOKE, output);
         startActivity(jokeIntent);
     }
 

@@ -14,12 +14,14 @@ import com.udacity.displayjokes.DisplayJokesActivity;
 import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
 
     private static MyApi myApiService = null;
 
     private Context mContext;
+    private CountDownLatch mSignal;
 
     public interface AsyncResponse {
         void processFinish(String output);
@@ -29,6 +31,12 @@ public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
 
     public EndpointsAsyncTask(Context context, AsyncResponse delegate) {
         mContext = context;
+        this.delegate = delegate;
+    }
+
+    public EndpointsAsyncTask(Context context, CountDownLatch signal, AsyncResponse delegate) {
+        mContext = context;
+        mSignal = signal;
         this.delegate = delegate;
     }
 
@@ -61,12 +69,12 @@ public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-//        // send the joke from java library to android library
-//        Intent jokeIntent = new Intent(mContext, DisplayJokesActivity.class);
-//        jokeIntent.putExtra("joke", result);
-//        mContext.startActivity(jokeIntent);
-
+        // returns the result using a callback pattern
         delegate.processFinish(result);
+
+        if (mSignal != null) {
+            mSignal.countDown();
+        }
     }
 
 }
